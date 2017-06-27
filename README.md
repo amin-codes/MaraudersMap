@@ -1,5 +1,5 @@
 # MaraudersMap
-A Minecraft plugin that displays the location of players on the map as the face of their characters skin.
+A Minecraft spigot/bukkit plugin that displays the location of players on the map as the face of their characters skin.
 
 # Config.yml
 [Default config.yml with tutorial](src/config.yml)
