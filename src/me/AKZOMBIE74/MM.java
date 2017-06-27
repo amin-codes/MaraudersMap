@@ -45,6 +45,8 @@ public class MM extends JavaPlugin {
         FACE_SIZE=getConfig().getInt("faceSize");
         scale = MapView.Scale.valueOf(getConfig().getString("scale"));
         getLogger().info("Test commit");
+
+
         getLogger().info("Enabled!");
     }
 
