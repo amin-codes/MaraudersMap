@@ -1,4 +1,4 @@
-# MaraudersMap:globe_with_meridians::feet:
+# MaraudersMap:world_map::feet:
 A Minecraft spigot/bukkit plugin that displays the location of players on the map as the face of their characters skin.
 
 # Config.yml
