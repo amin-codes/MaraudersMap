@@ -10,3 +10,6 @@ Players' faces are retrieved through http://minotar.net/.
 
 # Command
   + /mm - Gives the sender a marauders map if they are a player.
+
+# Demonstration
+![Alt Text](Demonstration/MaraudersMapDemonstration.gif)
