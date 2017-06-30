@@ -2,7 +2,10 @@
 A Minecraft spigot/bukkit plugin that displays the location of players on the map as the face of their characters skin.
 Players' faces are retrieved through http://minotar.net/.
 
-Download at https://www.spigotmc.org/resources/marauders-map.38505/ or https://dev.bukkit.org/projects/marauders-map
+# How To Install
+1. Download the plugin from either https://www.spigotmc.org/resources/marauders-map.38505/ or https://dev.bukkit.org/projects/marauders-map
+2. Put the plugin in your server's "plugins" folder.
+3. You are done. Now you can just start the server and hopefully enjoy this plugin.
 
 # Config.yml
 [Default config.yml with tutorial](src/config.yml)
