@@ -15,11 +15,12 @@ public class WorldChanged implements Listener {
     @EventHandler
     public void change(PlayerChangedWorldEvent e){
         Player p = e.getPlayer();
-        for (int i = 0; i < p.getInventory().getSize(); i++)
-        {
-            ItemStack is = p.getInventory().getItem(i);
-            if (MM.getInstance().isMaraudersMap(is)) {
-                p.getInventory().setItem(i, MM.getInstance().createMap(p.getWorld(), is.getAmount()).withScale(Bukkit.getMap(is.getDurability()).getScale()));
+        if (MM.getInstance().canUseMap(p)) {
+            for (int i = 0; i < p.getInventory().getSize(); i++) {
+                ItemStack is = p.getInventory().getItem(i);
+                if (MM.getInstance().isMaraudersMap(is)) {
+                    p.getInventory().setItem(i, MM.getInstance().createMap(p.getWorld(), is.getAmount()).withScale(Bukkit.getMap(is.getDurability()).getScale()));
+                }
             }
         }
     }
