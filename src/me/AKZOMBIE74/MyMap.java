@@ -53,6 +53,6 @@ public class MyMap implements CommandExecutor {
         ItemStack is = MM.getInstance().createMap(p.getWorld()).withScale(scale1);
 
         p.getInventory().addItem(is);
-        p.sendMessage(ChatColor.GREEN + "Received Marauders Map");
+        p.sendMessage(ChatColor.GREEN + "Received " + ChatColor.stripColor(MM.getInstance().getMapName()));
     }
 }
