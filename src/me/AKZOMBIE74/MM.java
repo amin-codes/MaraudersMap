@@ -259,4 +259,9 @@ public class MM extends JavaPlugin {
             }
         }
     }
+
+    public String getMapName()
+    {
+        return MAP_NAME;
+    }
 }
