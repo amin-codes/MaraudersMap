@@ -1,6 +1,6 @@
 # MaraudersMap:world_map::feet:
 A Minecraft spigot/bukkit plugin that displays the location of players on the map as the face of their characters skin.
-Players' faces are retrieved through http://minotar.net/.
+Players' faces are retrieved through [Minotar](http://minotar.net/).
 
 # How To Install
 1. Download the plugin from either https://www.spigotmc.org/resources/marauders-map.38505/ or https://dev.bukkit.org/projects/marauders-map
