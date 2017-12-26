@@ -13,7 +13,7 @@ Players' faces are retrieved through http://minotar.net/.
 # Permission
   + marauders.use - Allows the player to use the /mm command.
 
-# Command
+# Commands
   + /mm - Gives the sender a marauders map if they are a player.
   + /mm [player] - Gives the specified player a marauders map.
   + /mm <player_name> [CLOSEST|CLOSE|NORMAL|FAR|FARTHEST] - Gives the specified player a marauders map with a custom scale.
