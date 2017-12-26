@@ -30,17 +30,17 @@ public class MyMap implements CommandExecutor {
                             return false;
                         }
                     }
-                    scale = args.length > 1 ? MapView.Scale.valueOf(args[1]) : scale;
+                    scale = args.length > 1 ? MapView.Scale.valueOf(args[1].toUpperCase()) : scale;
                     giveMap(p, scale);
                     if (p!=sender) sender.sendMessage(ChatColor.GREEN+"Successfully gave map to " + p.getName() + "!");
-                    if (args.length > 1 && scale!=MapView.Scale.valueOf(args[1])) sender.sendMessage(ChatColor.RED+"That scale could not be found so the map given has the default scale");
+                    if (args.length > 1 && scale!=MapView.Scale.valueOf(args[1].toUpperCase())) sender.sendMessage(ChatColor.RED+"That scale could not be found so the map given has the default scale");
                 }
         } else {
             if (args.length > 0)
             {
-                scale = args.length > 1 ? MapView.Scale.valueOf(args[1]) : scale;
+                scale = args.length > 1 ? MapView.Scale.valueOf(args[1].toUpperCase()) : scale;
                 giveMap(Bukkit.getPlayer(args[0]), scale);
-                if (args.length > 1 && scale!=MapView.Scale.valueOf(args[1])) sender.sendMessage(ChatColor.RED+"That scale could not be found so the map given has the default scale");
+                if (args.length > 1 && scale!=MapView.Scale.valueOf(args[1].toUpperCase())) sender.sendMessage(ChatColor.RED+"That scale could not be found so the map given has the default scale");
             }
             else sender.sendMessage(ChatColor.RED + "Please specify a player!");
         }
