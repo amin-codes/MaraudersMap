@@ -38,6 +38,7 @@ public class MM extends JavaPlugin {
     private World w;
 
     private boolean INDIVIDUAL_SCALES;
+    private static String CAN_USE_MAP_PERMISSION = "marauders.activate";
 
     //Update stuff
     String VERSION, CURRENT_VERSION, CHANGELOG;
@@ -263,5 +264,10 @@ public class MM extends JavaPlugin {
     public String getMapName()
     {
         return MAP_NAME;
+    }
+
+    public boolean canUseMap(Player p)
+    {
+        return p.hasPermission(CAN_USE_MAP_PERMISSION);
     }
 }
