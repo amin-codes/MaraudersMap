@@ -21,7 +21,7 @@ public class ChangeIt implements Listener {
         Player p = e.getPlayer();
         String name = p.getName();
         HashMap<UUID, Image> oldFaces = MM.getInstance().getData().getOldImages();
-        
+
         if (oldFaces.containsKey(p.getUniqueId())) {
             //p.sendMessage("OLD FACE");
             MM.getInstance().getData().addToNew(p.getUniqueId(), oldFaces.get(p.getUniqueId()));
@@ -30,14 +30,14 @@ public class ChangeIt implements Listener {
             MM.getInstance().getData().addToNew(p.getUniqueId(), MM.getInstance().generateFace(name));
         }
 
-        for (int i=0; i< p.getInventory().getSize(); i++)
-        {
-            ItemStack itemStack = p.getInventory().getItem(i);
-            if (MM.getInstance().isMaraudersMap(itemStack))
-            {
-                p.getInventory().setItem(i, MM.getInstance().createMap(p.getWorld(), itemStack.getAmount()).withScale(Bukkit.getMap(itemStack.getDurability()).getScale()));
+        if (MM.getInstance().canUseMap(p)) {
+            for (int i = 0; i < p.getInventory().getSize(); i++) {
+                ItemStack itemStack = p.getInventory().getItem(i);
+                if (MM.getInstance().isMaraudersMap(itemStack)) {
+                    p.getInventory().setItem(i, MM.getInstance().createMap(p.getWorld(), itemStack.getAmount()).withScale(Bukkit.getMap(itemStack.getDurability()).getScale()));
+                }
             }
         }
-        
+
     }
 }
