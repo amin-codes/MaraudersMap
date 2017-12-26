@@ -1,33 +1,36 @@
 package me.AKZOMBIE74;
 
-import org.bukkit.entity.Player;
-import org.bukkit.map.MapRenderer;
-
 import java.awt.*;
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * Created by Amin on 3/25/2017.
  */
 public class MapData {
-    private HashMap<Player, Image> images = new HashMap<>();
-    private HashMap<Player, Image> oldImages = new HashMap<>();
-    private MapRenderer defaultMap = null;
+    private HashMap<UUID, Image> images = new HashMap<>();
+    private HashMap<UUID, Image> oldImages = new HashMap<>();
 
-    HashMap<Player, Image> getImages(){
+    HashMap<UUID, Image> getImages(){
         return images;
     }
 
-    public HashMap<Player, Image> getOldImages() {
+    public HashMap<UUID, Image> getOldImages() {
         return oldImages;
     }
 
-    MapRenderer getDefaultMap(){
-        return defaultMap;
+    public void addToOld(UUID p, Image image)
+    {
+        oldImages.put(p, image);
     }
 
-    void setDefaultMap(MapRenderer r){
-        defaultMap = r;
+    public void addToNew(UUID p, Image image)
+    {
+        images.put(p, image);
     }
 
+    public void removeFromNew(UUID p)
+    {
+        images.remove(p);
+    }
 }
