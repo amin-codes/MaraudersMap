@@ -107,7 +107,7 @@ public class myRender extends MapRenderer{
                 .getImages()
                 .entrySet()
                 .stream()
-                .filter(map -> Bukkit.getServer().getPlayer(map.getKey()).getWorld().equals(player.getWorld()) && Bukkit.getServer().getPlayer(map.getKey()).isOnline() && isInRange(Bukkit.getServer().getPlayer(map.getKey()).getLocation(), player.getLocation(), scale)).forEach(set -> { //key = player uuid, value = image
+                .filter(map -> Bukkit.getServer().getPlayer(map.getKey()).getWorld().equals(player.getWorld()) && Bukkit.getServer().getPlayer(map.getKey()).isOnline() && isInRange(Bukkit.getServer().getPlayer(map.getKey()).getLocation(), player.getLocation(), scale) && MM.getInstance().showOrNot(Bukkit.getServer().getPlayer(map.getKey()))).forEach(set -> { //key = player uuid, value = image
                 Player key = Bukkit.getServer().getPlayer(set.getKey());
                 //int distanceX = (int) (63.5 * key.getLocation().getBlockX())/centerX;
                 //int distanceZ = (int) (63.5 * key.getLocation().getBlockZ())/centerZ;
