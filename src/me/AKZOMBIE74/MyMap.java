@@ -26,21 +26,36 @@ public class MyMap implements CommandExecutor {
                         p = Bukkit.getPlayer(args[0]);
                         if (p==null)
                         {
-                            sender.sendMessage(ChatColor.RED+"Player not found!");
+                            sender.sendMessage(ChatColor.RED + args[0] + " is not online or does not exist.");
                             return false;
                         }
                     }
-                    scale = args.length > 1 ? MapView.Scale.valueOf(args[1].toUpperCase()) : scale;
+                    try {
+                        scale = args.length > 1 ? MapView.Scale.valueOf(args[1].toUpperCase()) : scale;
+                    } catch (IllegalArgumentException e)
+                    {
+                        sender.sendMessage(ChatColor.RED + "That is not valid scale so the map will be given the default scale");
+                    }
                     giveMap(p, scale);
-                    if (p!=sender) sender.sendMessage(ChatColor.GREEN+"Successfully gave map to " + p.getName() + "!");
-                    if (args.length > 1 && scale!=MapView.Scale.valueOf(args[1].toUpperCase())) sender.sendMessage(ChatColor.RED+"That scale could not be found so the map given has the default scale");
+                    if (p!=sender) sender.sendMessage(ChatColor.GREEN + "Successfully gave map to " + p.getName() + "!");
                 }
         } else {
             if (args.length > 0)
             {
-                scale = args.length > 1 ? MapView.Scale.valueOf(args[1].toUpperCase()) : scale;
-                giveMap(Bukkit.getPlayer(args[0]), scale);
-                if (args.length > 1 && scale!=MapView.Scale.valueOf(args[1].toUpperCase())) sender.sendMessage(ChatColor.RED+"That scale could not be found so the map given has the default scale");
+                Player p = Bukkit.getPlayer(args[0]);
+
+                if (p==null)
+                {
+                    sender.sendMessage(ChatColor.RED + args[0] + " is not online or does not exist.");
+                    return false;
+                }
+                try {
+                    scale = args.length > 1 ? MapView.Scale.valueOf(args[1].toUpperCase()) : scale;
+                } catch (IllegalArgumentException e)
+                {
+                    sender.sendMessage(ChatColor.RED + "That is not valid scale so the map will be given the default scale");
+                }
+                giveMap(p, scale);
             }
             else sender.sendMessage(ChatColor.RED + "Please specify a player!");
         }
