@@ -1,16 +1,15 @@
 //MaraudersMain
 package me.AKZOMBIE74;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -38,7 +37,8 @@ public class MM extends JavaPlugin {
     private World w;
 
     private boolean INDIVIDUAL_SCALES;
-    private static String CAN_USE_MAP_PERMISSION = "marauders.activate";
+    private boolean SHOW_IF_INVISIBLE;
+    private boolean SHOW_IF_SPECTATING;
 
     //Update stuff
     String VERSION, CURRENT_VERSION, CHANGELOG;
@@ -64,6 +64,8 @@ public class MM extends JavaPlugin {
         FACE_SIZE=getConfig().getInt("faceSize");
         SCALE = MapView.Scale.valueOf(getConfig().getString("scale"));
         INDIVIDUAL_SCALES = getConfig().getBoolean("individual-scales");
+        SHOW_IF_INVISIBLE = getConfig().getBoolean("show-players-when-invisible");
+        SHOW_IF_SPECTATING = getConfig().getBoolean("show-players-when-spectating");
         checkForUpdates();
         getLogger().info("Enabled!");
     }
@@ -133,6 +135,8 @@ public class MM extends JavaPlugin {
                 getConfig().set("scale", "CLOSEST");
                 getConfig().set("individual-scales", true);
                 getConfig().set("show-update-message", true);
+                getConfig().set("show-players-when-invisible", true);
+                getConfig().set("show-players-when-spectating", false);
                 saveConfig();
             } else {
                 getLogger().info("Config.yml found, loading!");
@@ -268,6 +272,31 @@ public class MM extends JavaPlugin {
 
     public boolean canUseMap(Player p)
     {
+        String CAN_USE_MAP_PERMISSION = "marauders.activate";
         return p.hasPermission(CAN_USE_MAP_PERMISSION);
+    }
+
+    public boolean showIfInvisible(Player p) {
+        if (SHOW_IF_INVISIBLE) return true;
+
+        for (PotionEffect potionEffect : p.getActivePotionEffects())
+        {
+            if (potionEffect.getType().equals(PotionEffectType.INVISIBILITY))
+                return false;
+        }
+        return true;
+    }
+
+    public boolean showIfSpectating(Player p) {
+        if (!SHOW_IF_SPECTATING && p.getGameMode() == GameMode.SPECTATOR)
+            return false;
+        return true;
+    }
+
+    public boolean showOrNot(Player p)
+    {
+        if (!showIfSpectating(p)) return false;
+        else if (!showIfInvisible(p))return false;
+        return true;
     }
 }
