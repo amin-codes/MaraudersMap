@@ -1,5 +1,5 @@
 name: MaraudersMap
-version: 0.2.91
+version: 0.2.92
 main: me.AKZOMBIE74.MM
 commands:
   mm:
