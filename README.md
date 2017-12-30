@@ -10,7 +10,7 @@ Players' faces are retrieved through [Minotar](http://minotar.net/).
 # Config.yml
 [Default config.yml with tutorial](src/config.yml)
 
-# Permission
+# Permissions
   + marauders.use - Allows the player to use the /mm command.
   + marauders.activate - Allows the player to use the map.
 
