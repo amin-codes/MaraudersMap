@@ -32,14 +32,29 @@ public class myRender extends MapRenderer{
     private static final Class<?> WorldS = getClass(world_server);
     private static final Class<?> PersistantC = getClass(persistant_collection);
 
+    private boolean cleared;
 
     myRender(){
         super(true);
+        cleared = false;
     }
 
     @Override
     public void render(MapView mapView, MapCanvas mapCanvas, Player player) {
 
+        if (!MM.getInstance().canUseMap(player))
+        {
+            if (!cleared) {
+                for (int i = 0; i < 128; i++) {
+                    for (int j = 0; j < 128; j++) {
+                        mapCanvas.setPixel(i, j, (byte) 0);
+                    }
+                }
+                cleared = true;
+            }
+            return;
+        }
+        cleared = false;
         MapView.Scale scale = MM.getInstance().scale();
         try {
             Method getServer = MinecraftS.getMethod("getServer");
