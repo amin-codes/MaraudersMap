@@ -74,7 +74,7 @@ public class MM extends JavaPlugin {
     public void onDisable() {
         MM.getInstance().getData().getImages().clear();
         MM.getInstance().getData().getOldImages().clear();
-        Bukkit.getServer().getOnlinePlayers().stream().filter(this::canUseMap).forEach(MM::removeMyRender);
+        Bukkit.getServer().getOnlinePlayers().forEach(MM::removeMyRender);
         instance = null;
     }
 
