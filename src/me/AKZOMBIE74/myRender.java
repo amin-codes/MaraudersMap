@@ -1,7 +1,8 @@
 package me.AKZOMBIE74;
 
+import me.AKZOMBIE74.utils.MapMethods;
+import me.AKZOMBIE74.utils.NMS;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.map.*;
 
@@ -16,21 +17,6 @@ import java.util.*;
  * Created by Amin on 3/25/2017.
  */
 public class myRender extends MapRenderer{
-    private static String server_version = MM.getInstance().getServerVersion();
-    private static final String craft_maprenderer = "org.bukkit.craftbukkit." + server_version + ".map.CraftMapRenderer";
-    private static final String craft_map_view = "org.bukkit.craftbukkit." + server_version + ".map.CraftMapView";
-    private static final String world_map = "net.minecraft.server." + server_version + ".WorldMap";
-    private static final String minecraft_server = "net.minecraft.server." + server_version + ".MinecraftServer";
-    private static final String world_server = "net.minecraft.server." + server_version + ".WorldServer";
-    private static final String persistant_collection ="net.minecraft.server." + server_version + ".PersistentCollection";
-
-
-    private static final Class<?> CraftMapRender = getClass(craft_maprenderer);
-    private static final Class<?> CraftMapV = getClass(craft_map_view);
-    private static final Class<?> WorldM = getClass(world_map);
-    private static final Class<?> MinecraftS = getClass(minecraft_server);
-    private static final Class<?> WorldS = getClass(world_server);
-    private static final Class<?> PersistantC = getClass(persistant_collection);
 
     private boolean cleared;
 
@@ -42,37 +28,30 @@ public class myRender extends MapRenderer{
     @Override
     public void render(MapView mapView, MapCanvas mapCanvas, Player player) {
 
-        if (!MM.getInstance().canUseMap(player))
-        {
-            if (!cleared) {
-                for (int i = 0; i < 128; i++) {
-                    for (int j = 0; j < 128; j++) {
-                        mapCanvas.setPixel(i, j, (byte) 0);
-                    }
-                }
-                cleared = true;
-            }
-            return;
+        if (!cleared) {
+            MapMethods.clearCanvas(mapCanvas);
+            cleared = true;
         }
-        cleared = false;
+        if (!MM.getInstance().canUseMap(player)) return;
+
         MapView.Scale scale = MM.getInstance().scale();
         try {
-            Method getServer = MinecraftS.getMethod("getServer");
+            Method getServer = NMS.MinecraftS.getMethod("getServer");
             Object s = getServer.invoke(null); //Returns MinecraftServer
             Field worlds_1 = s.getClass().getField("worlds");
             worlds_1.setAccessible(true);
             List worlds_final = (List) worlds_1.get(s);
-            Object worlds = WorldS.cast(worlds_final.get(0));
+            Object worlds = NMS.WorldS.cast(worlds_final.get(0));
 
             Field world_maps = worlds.getClass().getField("worldMaps");
-            Object world_maps_final = PersistantC.cast(world_maps.get(worlds));
-            Method w = world_maps_final.getClass().getMethod("get", PersistantC.getClass(), String.class);
+            Object world_maps_final = NMS.PersistantC.cast(world_maps.get(worlds));
+            Method w = world_maps_final.getClass().getMethod("get", NMS.PersistantC.getClass(), String.class);
 
 
-            Constructor craftMapConstructor = CraftMapRender.getDeclaredConstructor(CraftMapV, WorldM);
+            Constructor craftMapConstructor = NMS.CraftMapRender.getDeclaredConstructor(NMS.CraftMapV, NMS.WorldM);
             craftMapConstructor.setAccessible(true);
-            Object world_map = WorldM.cast(w.invoke(world_maps_final, WorldM.getClass(), "map_"+mapView.getId()));
-            Object craftMapRenderer = craftMapConstructor.newInstance(CraftMapV.cast(mapView),
+            Object world_map = NMS.WorldM.cast(w.invoke(world_maps_final, NMS.WorldM.getClass(), "map_"+mapView.getId()));
+            Object craftMapRenderer = craftMapConstructor.newInstance(NMS.CraftMapV.cast(mapView),
                     world_map);
 
 
@@ -122,73 +101,19 @@ public class myRender extends MapRenderer{
                 .getImages()
                 .entrySet()
                 .stream()
-                .filter(map -> Bukkit.getServer().getPlayer(map.getKey()).getWorld().equals(player.getWorld()) && Bukkit.getServer().getPlayer(map.getKey()).isOnline() && isInRange(Bukkit.getServer().getPlayer(map.getKey()).getLocation(), player.getLocation(), scale) && MM.getInstance().showOrNot(Bukkit.getServer().getPlayer(map.getKey()))).forEach(set -> { //key = player uuid, value = image
+                .filter(map -> Bukkit.getServer().getPlayer(map.getKey()).getWorld().equals(player.getWorld()) && Bukkit.getServer().getPlayer(map.getKey()).isOnline() && MapMethods.isInRange(Bukkit.getServer().getPlayer(map.getKey()).getLocation(), player.getLocation(), scale) && MM.getInstance().showOrNot(Bukkit.getServer().getPlayer(map.getKey()))).forEach(set -> { //key = player uuid, value = image
                 Player key = Bukkit.getServer().getPlayer(set.getKey());
                 //int distanceX = (int) (63.5 * key.getLocation().getBlockX())/centerX;
                 //int distanceZ = (int) (63.5 * key.getLocation().getBlockZ())/centerZ;
-                int[] coords = convertLocationToMapCoords(centerX, centerZ, key.getLocation(), scale);
+                int[] coords = MapMethods.convertLocationToMapCoords(centerX, centerZ, key.getLocation(), scale);
 
                 mapCanvas.drawImage(coords[0] - imageSize, coords[1] - imageSize, set.getValue());
         });
+        cleared = false;
     }
 
     @Override
     public void initialize(MapView map) {
         super.initialize(map);
-    }
-
-    private static int getScaleSize(MapView.Scale scale ) {
-        if ( scale.equals( MapView.Scale.CLOSEST ) ) return 1;
-        else if ( scale.equals( MapView.Scale.CLOSE ) ) return 2;
-        else if ( scale.equals( MapView.Scale.NORMAL ) ) return 4;
-        else if ( scale.equals( MapView.Scale.FAR ) ) return 8;
-        else if ( scale.equals( MapView.Scale.FARTHEST ) ) return 16;
-        return 0;
-    }
-
-    //returns [x, y]
-    private static int[] convertLocationToMapCoords(int centerX, int centerZ, Location l1, MapView.Scale scale)
-    {
-        int scale_size = getScaleSize(scale);
-        int distanceX = ((l1.getBlockX() - centerX) / scale_size) + 63;
-        int distanceZ = ((l1.getBlockZ() - centerZ) / scale_size) + 63;
-        return new int[]{distanceX, distanceZ};
-    }
-
-    private static boolean isInRange(Location p1, Location p2, MapView.Scale scale)
-    {
-        int scale_size = getScaleSize(scale) * 128;
-        return p1.distance(p2) <= scale_size;
-    }
-
-
-
-    static void applyToMap(MapView map, MapView.Scale... scale) {
-        if(map != null){
-            if (scale.length > 0) map.setScale(scale[0]);
-            else map.setScale(MM.getInstance().scale());
-            for (MapRenderer renderer : map.getRenderers()) {
-                map.removeRenderer(renderer);
-
-            }
-            map.addRenderer(new myRender());
-            //map.addRenderer(MM.getInstance().getData().getDefaultMap());
-            //map.addRenderer();
-        }
-    }
-
-    private static Class<?> getClass(String className, boolean... inner)
-    {
-        Class<?> type = null;
-        boolean in = inner.length > 0 ? inner[0] : false;
-        try {
-            if (in)
-            {
-                int last = className.lastIndexOf(".");
-                className = className.substring(0, last) + "$" + className.substring(last+1);
-            }
-            type = Class.forName(className);
-        } catch (ClassNotFoundException e) {}
-        return type;
     }
 }
