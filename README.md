@@ -15,9 +15,9 @@ Players' faces are retrieved through [Minotar](http://minotar.net/).
   + marauders.activate - Allows the player to use the map.
 
 # Commands
-  + /mm - Gives the sender a marauders map if they are a player.
-  + /mm [player] - Gives the specified player a marauders map.
-  + /mm <player_name> [CLOSEST|CLOSE|NORMAL|FAR|FARTHEST] - Gives the specified player a marauders map with a custom scale.
+  + `/mm` - Gives the sender a marauders map if they are a player.
+  + `/mm [player]` - Gives the specified player a marauders map.
+  + `/mm <player_name> [CLOSEST|CLOSE|NORMAL|FAR|FARTHEST]` - Gives the specified player a marauders map with a custom scale.
 
 # Demonstration
 ![Marauders Map Plugin Demonstration](Demonstration/MaraudersMapDemonstration.gif)
