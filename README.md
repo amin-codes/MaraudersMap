@@ -4,7 +4,7 @@ Players' faces are retrieved through [Minotar](http://minotar.net/).
 
 # How To Install
 1. Download the plugin from either [Spigot](https://www.spigotmc.org/resources/marauders-map.38505/) or [Bukkit](https://dev.bukkit.org/projects/marauders-map). There is no difference.
-2. Put the plugin in your server's "plugins" folder.
+2. Put the plugin in your server's `plugins` folder.
 3. You are done. Now you can just start the server and hopefully enjoy this plugin.
 
 # Config.yml
