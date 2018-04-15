@@ -30,6 +30,7 @@ public class ChangeIt implements Listener {
             MM.getInstance().getData().addToNew(p.getUniqueId(), MM.getInstance().generateFace(name));
         }
 
+
         if (MM.getInstance().canUseMap(p)) {
             for (int i = 0; i < p.getInventory().getSize(); i++) {
                 ItemStack itemStack = p.getInventory().getItem(i);
