@@ -1,5 +1,5 @@
 name: MaraudersMap
-version: 0.1
+version: 0.2.95
 main: me.AKZOMBIE74.MM
 commands:
   mm:
@@ -7,3 +7,5 @@ commands:
 permissions:
   marauders.use:
     description: Permission to be able to use the command to get map.
+  marauders.activate:
+    description: Permission to be able to use the map.

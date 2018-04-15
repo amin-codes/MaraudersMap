@@ -6,10 +6,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.map.MapView;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * Created by Amin on 3/25/2017.
@@ -20,25 +20,24 @@ public class ChangeIt implements Listener {
     public void change(PlayerJoinEvent e) {
         Player p = e.getPlayer();
         String name = p.getName();
-        HashMap<Player, Image> playerFaces = MM.getInstance().getData().getImages();
-        HashMap<Player, Image> oldFaces = MM.getInstance().getData().getOldImages();
-        ItemStack is = MM.getInstance().createMap();
+        HashMap<UUID, Image> oldFaces = MM.getInstance().getData().getOldImages();
 
-        MapView mapView = Bukkit.getMap(is.getDurability());
-
-        if (MM.getInstance().getData().getDefaultMap() == null) {
-            MM.getInstance().getData().setDefaultMap(mapView.getRenderers().get(0));
-        }
-        myRender.applyToMap(mapView);
-
-        if (oldFaces.containsKey(p)) {
-            playerFaces.put(p, oldFaces.get(p));
+        if (oldFaces.containsKey(p.getUniqueId())) {
+            //p.sendMessage("OLD FACE");
+            MM.getInstance().getData().addToNew(p.getUniqueId(), oldFaces.get(p.getUniqueId()));
         } else {
-            playerFaces.put(p, MM.getInstance().generateFace(name));
+            //p.sendMessage("NEW FACE");
+            MM.getInstance().getData().addToNew(p.getUniqueId(), MM.getInstance().generateFace(name));
         }
 
-        if (p.getInventory().contains(is)){
-            p.getInventory().all(is).forEach((key, item) -> p.getInventory().setItem(key, is));
+        if (MM.getInstance().canUseMap(p)) {
+            for (int i = 0; i < p.getInventory().getSize(); i++) {
+                ItemStack itemStack = p.getInventory().getItem(i);
+                if (MM.getInstance().isMaraudersMap(itemStack)) {
+                    p.getInventory().setItem(i, MM.getInstance().createMap(p.getWorld(), itemStack.getAmount()).withScale(Bukkit.getMap(itemStack.getDurability()).getScale()));
+                }
+            }
         }
+
     }
 }

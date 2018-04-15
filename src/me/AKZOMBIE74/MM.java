@@ -1,14 +1,15 @@
+//MaraudersMain
 package me.AKZOMBIE74;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -18,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashMap;
 
 /**
  * Created by Amin on 3/25/2017.
@@ -26,9 +26,19 @@ import java.util.HashMap;
 public class MM extends JavaPlugin {
     private static MM instance;
     private int FACE_SIZE = -1;
-    private MapView.Scale scale;
+    private MapView.Scale SCALE;
+    private String MAP_NAME;
 
     private MapData data;
+    private String server_version;
+
+    private ItemStack map;
+    private int am;//Amount
+    private World w;
+
+    private boolean INDIVIDUAL_SCALES;
+    private boolean SHOW_IF_INVISIBLE;
+    private boolean SHOW_IF_SPECTATING;
 
     //Update stuff
     String VERSION, CURRENT_VERSION, CHANGELOG;
@@ -41,47 +51,64 @@ public class MM extends JavaPlugin {
 
         PluginManager pm = Bukkit.getServer().getPluginManager();
         pm.registerEvents(new ChangeIt(), instance);
-        pm.registerEvents(new MapListener(), instance);
+        //pm.registerEvents(new MapListener(), instance);
         pm.registerEvents(new leave(), instance);
+        server_version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
         pm.registerEvents(new WorldChanged(), instance);
+        //pm.registerEvents(new Updater(), instance);
 
         getCommand("mm").setExecutor(new MyMap());
 
         createConfig();
-
+        MAP_NAME = ChatColor.translateAlternateColorCodes('&', getConfig().getString("map-display-name"));
         FACE_SIZE=getConfig().getInt("faceSize");
-        scale = MapView.Scale.valueOf(getConfig().getString("scale"));
+        SCALE = MapView.Scale.valueOf(getConfig().getString("scale"));
+        INDIVIDUAL_SCALES = getConfig().getBoolean("individual-scales");
+        SHOW_IF_INVISIBLE = getConfig().getBoolean("show-players-when-invisible");
+        SHOW_IF_SPECTATING = getConfig().getBoolean("show-players-when-spectating");
         checkForUpdates();
         getLogger().info("Enabled!");
     }
 
     @Override
     public void onDisable() {
-        try {
-            HashMap<Player, Image> playerFaces = MM.getInstance().getData().getImages();
-            HashMap<Player, Image> oldFaces = MM.getInstance().getData().getOldImages();
-            playerFaces.clear();
-            oldFaces.clear();
-        } catch (NoSuchMethodError e){
-
-        }
+        MM.getInstance().getData().getImages().clear();
+        MM.getInstance().getData().getOldImages().clear();
+        Bukkit.getServer().getOnlinePlayers().forEach(MM::removeMyRender);
+        instance = null;
     }
 
-    static MM getInstance(){
+    public static MM getInstance(){
         return instance;
     }
 
-    MapData getData(){
+    public MapData getData(){
         return data;
     }
 
-    ItemStack createMap() {
-        ItemStack map = new ItemStack(Material.MAP);
+    MM createMap(World world, int... amount) {
+        map = null;
+        w = world;
+        am = amount.length > 0 ? amount[0] : 1;
+        return this;
+    }
+
+    public ItemStack withScale(MapView.Scale... scale1)
+    {
+
+        MapView.Scale scale = INDIVIDUAL_SCALES && scale1.length > 0 ? scale1[0] : SCALE;
+
+        MapView mapView = Bukkit.createMap(w);
+        myRender.applyToMap(mapView, scale);
+        map = new ItemStack(Material.MAP, am);
         MapMeta meta = (MapMeta) map.getItemMeta();
-        meta.setDisplayName(ChatColor.YELLOW+"Marauders Map");
-
+        meta.setDisplayName(MAP_NAME);
+        meta.setScaling(true);
         map.setItemMeta(meta);
+        map.setDurability(mapView.getId());
 
+        am = 1;
+        w = null;
         return map;
     }
 
@@ -90,7 +117,7 @@ public class MM extends JavaPlugin {
     }
 
     MapView.Scale scale(){
-        return scale;
+        return SCALE;
     }
 
     private void createConfig() {
@@ -103,9 +130,13 @@ public class MM extends JavaPlugin {
             if (!file.exists()) {
                 getLogger().info("Config.yml not found, creating!");
                 saveDefaultConfig();
+                getConfig().set("map-display-name", "&eMarauders Map");
                 getConfig().set("faceSize", 4);
                 getConfig().set("scale", "CLOSEST");
+                getConfig().set("individual-scales", true);
                 getConfig().set("show-update-message", true);
+                getConfig().set("show-players-when-invisible", true);
+                getConfig().set("show-players-when-spectating", false);
                 saveConfig();
             } else {
                 getLogger().info("Config.yml found, loading!");
@@ -210,5 +241,62 @@ public class MM extends JavaPlugin {
             getInstance().getLogger().info("Something went wrong with getting the image");
         }
         return null;
+    }
+
+    public String getServerVersion()
+    {
+        return server_version;
+    }
+
+    public boolean isMaraudersMap(ItemStack is)
+    {
+        return is != null && is.hasItemMeta() && is.getType() == Material.MAP && is.getItemMeta().getDisplayName().equals(MAP_NAME) && ((MapMeta)is.getItemMeta()).isScaling();
+    }
+
+    public static void removeMyRender(Player player)
+    {
+        for (ItemStack is : player.getInventory().getContents())
+        {
+            if (MM.getInstance().isMaraudersMap(is))
+            {
+                MapView view = Bukkit.getMap(is.getDurability());
+                view.getRenderers().forEach(view::removeRenderer);
+            }
+        }
+    }
+
+    public String getMapName()
+    {
+        return MAP_NAME;
+    }
+
+    public boolean canUseMap(Player p)
+    {
+        String CAN_USE_MAP_PERMISSION = "marauders.activate";
+        return p.hasPermission(CAN_USE_MAP_PERMISSION);
+    }
+
+    public boolean showIfInvisible(Player p) {
+        if (SHOW_IF_INVISIBLE) return true;
+
+        for (PotionEffect potionEffect : p.getActivePotionEffects())
+        {
+            if (potionEffect.getType().equals(PotionEffectType.INVISIBILITY))
+                return false;
+        }
+        return true;
+    }
+
+    public boolean showIfSpectating(Player p) {
+        if (!SHOW_IF_SPECTATING && p.getGameMode() == GameMode.SPECTATOR)
+            return false;
+        return true;
+    }
+
+    public boolean showOrNot(Player p)
+    {
+        if (!showIfSpectating(p)) return false;
+        else if (!showIfInvisible(p))return false;
+        return true;
     }
 }

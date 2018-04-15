@@ -2,3 +2,8 @@
 #Scale can range from CLOSEST, CLOSE, NORMAL, FAR, FARTHEST
 faceSize: 4 #How big do you want the face images to be?
 scale: CLOSEST #This is the view for the player when viewing the map. CLOSEST will give the player the smallest possible view of the world.
+map-display-name: '&eMarauders Map' #Name of the map
+individual-scales: true #Do you want each map to preserve its scale even though you changed it in the config?
+show-update-message: true #Do you want to see the update message that notifies you of an update?
+show-players-when-invisible: true #Do you want players to show up on the map when they have the invisibility potion used on them?
+show-players-when-spectating: false #Do you want players to show up on the map when they are spectating (in gamemode 3)?

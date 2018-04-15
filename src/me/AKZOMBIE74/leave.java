@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * Created by Amin on 3/26/2017.
@@ -16,12 +17,12 @@ public class leave implements Listener {
     @EventHandler
     public void onLeave(PlayerQuitEvent e){
         Player p = e.getPlayer();
-        HashMap<Player, Image> playerFaces = MM.getInstance().getData().getImages();
-        HashMap<Player, Image> oldImages = MM.getInstance().getData().getOldImages();
-        if ((!oldImages.containsKey(p)) && playerFaces.containsKey(p)) {
-            MM.getInstance().getData().getOldImages().put(p, playerFaces.get(p));
-            playerFaces.remove(p);
+        HashMap<UUID, Image> playerFaces = MM.getInstance().getData().getImages();
+        HashMap<UUID, Image> oldImages = MM.getInstance().getData().getOldImages();
+        if (playerFaces.containsKey(p.getUniqueId()) && !oldImages.containsKey(p.getUniqueId())) {
+            MM.getInstance().getData().addToOld(p.getUniqueId(), playerFaces.get(p.getUniqueId()));
         }
-        playerFaces.remove(e.getPlayer());
+        MM.getInstance().getData().removeFromNew(p.getUniqueId());
+
     }
 }
