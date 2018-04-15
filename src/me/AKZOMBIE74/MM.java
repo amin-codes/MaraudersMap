@@ -1,10 +1,13 @@
 //MaraudersMain
 package me.AKZOMBIE74;
 
+import me.AKZOMBIE74.asynchronous.Request;
+import me.AKZOMBIE74.asynchronous.Response;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * Created by Amin on 3/25/2017.
@@ -48,6 +53,7 @@ public class MM extends JavaPlugin {
     public void onEnable(){
         instance = this;
         data = new MapData();
+        data.startExecutor();
 
         PluginManager pm = Bukkit.getServer().getPluginManager();
         pm.registerEvents(new ChangeIt(), instance);
@@ -75,6 +81,8 @@ public class MM extends JavaPlugin {
         MM.getInstance().getData().getImages().clear();
         MM.getInstance().getData().getOldImages().clear();
         Bukkit.getServer().getOnlinePlayers().forEach(MM::removeMyRender);
+        data.getExecutor().shutdown();
+        data = null;
         instance = null;
     }
 
@@ -99,7 +107,7 @@ public class MM extends JavaPlugin {
         MapView.Scale scale = INDIVIDUAL_SCALES && scale1.length > 0 ? scale1[0] : SCALE;
 
         MapView mapView = Bukkit.createMap(w);
-        myRender.applyToMap(mapView, scale);
+        applyToMap(mapView, scale);
         map = new ItemStack(Material.MAP, am);
         MapMeta meta = (MapMeta) map.getItemMeta();
         meta.setDisplayName(MAP_NAME);
@@ -235,7 +243,14 @@ public class MM extends JavaPlugin {
     Image generateFace(String name) {
         try {
             URL url = new URL("https://minotar.net/avatar/" + name + "/"+imageSize()+".png");
-            Image image = ImageIO.read(url);
+            Future<Response> response = data.getExecutor().submit(new Request(new URL("https://minotar.net/avatar/" + name + "/"+imageSize()+".png")));
+            Image image = null;
+            try {
+                image = ImageIO.read(response.get().getBody());
+            } catch (InterruptedException | ExecutionException e)
+            {
+
+            }
             return image;
         } catch (IOException e) {
             getInstance().getLogger().info("Something went wrong with getting the image");
@@ -298,5 +313,19 @@ public class MM extends JavaPlugin {
         if (!showIfSpectating(p)) return false;
         else if (!showIfInvisible(p))return false;
         return true;
+    }
+
+    void applyToMap(MapView map, MapView.Scale... scale) {
+        if(map != null){
+            if (scale.length > 0) map.setScale(scale[0]);
+            else map.setScale(MM.getInstance().scale());
+            for (MapRenderer renderer : map.getRenderers()) {
+                map.removeRenderer(renderer);
+
+            }
+            map.addRenderer(new myRender());
+            //map.addRenderer(MM.getInstance().getData().getDefaultMap());
+            //map.addRenderer();
+        }
     }
 }
