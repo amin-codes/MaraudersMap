@@ -3,6 +3,8 @@ package me.AKZOMBIE74;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by Amin on 3/25/2017.
@@ -10,6 +12,7 @@ import java.util.UUID;
 public class MapData {
     private HashMap<UUID, Image> images = new HashMap<>();
     private HashMap<UUID, Image> oldImages = new HashMap<>();
+    private ExecutorService executor;
 
     HashMap<UUID, Image> getImages(){
         return images;
@@ -32,5 +35,14 @@ public class MapData {
     public void removeFromNew(UUID p)
     {
         images.remove(p);
+    }
+
+    public void startExecutor()
+    {
+        executor = Executors.newFixedThreadPool(1);
+    }
+    public ExecutorService getExecutor()
+    {
+        return executor;
     }
 }
