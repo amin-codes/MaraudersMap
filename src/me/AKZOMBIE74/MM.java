@@ -242,7 +242,7 @@ public class MM extends JavaPlugin {
 
     Image generateFace(String name) {
         try {
-            URL url = new URL("https://minotar.net/avatar/" + name + "/"+imageSize()+".png");
+            //URL url = new URL("https://minotar.net/avatar/" + name + "/"+imageSize()+".png");
             Future<Response> response = data.getExecutor().submit(new Request(new URL("https://minotar.net/avatar/" + name + "/"+imageSize()+".png")));
             Image image = null;
             try {
