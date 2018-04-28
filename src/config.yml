@@ -7,3 +7,4 @@ individual-scales: true #Do you want each map to preserve its scale even though 
 show-update-message: true #Do you want to see the update message that notifies you of an update?
 show-players-when-invisible: true #Do you want players to show up on the map when they have the invisibility potion used on them?
 show-players-when-spectating: false #Do you want players to show up on the map when they are spectating (in gamemode 3)?
+base-command: mm #Change the base command for the plugin
