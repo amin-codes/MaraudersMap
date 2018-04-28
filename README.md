@@ -19,6 +19,7 @@ Players' faces are retrieved through [Minotar](http://minotar.net/).
   + `/mm [player]` - Gives the specified player a marauders map.
   + `/mm <player_name> [CLOSEST|CLOSE|NORMAL|FAR|FARTHEST]` - Gives the specified player a marauders map with a custom scale.
 
+*NOTE: `/mm` is the default base command. Depending on whether you changed `base-command` in the `config.yml` file, your base command may be different, but the arguments will remain the same.*
 # Demonstration
 ![Marauders Map Plugin Demonstration](Demonstration/MaraudersMapDemonstration.gif)
 
