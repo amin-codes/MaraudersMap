@@ -33,6 +33,7 @@ public class MM extends JavaPlugin {
     private int FACE_SIZE = -1;
     private MapView.Scale SCALE;
     private String MAP_NAME;
+    private String BASE_COMMAND;
 
     private MapData data;
     private String server_version;
@@ -63,8 +64,6 @@ public class MM extends JavaPlugin {
         pm.registerEvents(new WorldChanged(), instance);
         //pm.registerEvents(new Updater(), instance);
 
-        getCommand("mm").setExecutor(new MyMap());
-
         createConfig();
         MAP_NAME = ChatColor.translateAlternateColorCodes('&', getConfig().getString("map-display-name"));
         FACE_SIZE=getConfig().getInt("faceSize");
@@ -72,6 +71,9 @@ public class MM extends JavaPlugin {
         INDIVIDUAL_SCALES = getConfig().getBoolean("individual-scales");
         SHOW_IF_INVISIBLE = getConfig().getBoolean("show-players-when-invisible");
         SHOW_IF_SPECTATING = getConfig().getBoolean("show-players-when-spectating");
+        BASE_COMMAND = getConfig().getString("base-command");
+
+        getCommand(BASE_COMMAND).setExecutor(new MyMap());
         checkForUpdates();
         getLogger().info("Enabled!");
     }
@@ -145,6 +147,7 @@ public class MM extends JavaPlugin {
                 getConfig().set("show-update-message", true);
                 getConfig().set("show-players-when-invisible", true);
                 getConfig().set("show-players-when-spectating", false);
+                getConfig().set("base-command", "mm");
                 saveConfig();
             } else {
                 getLogger().info("Config.yml found, loading!");
@@ -161,7 +164,8 @@ public class MM extends JavaPlugin {
     private void checkForValues(){
         if (!(getConfig().isInt("faceSize")
                 && getConfig().isString("scale")
-                && getConfig().isBoolean("show-update-message"))) {
+                && getConfig().isBoolean("show-update-message")
+                && getConfig().isSet("base-command"))) {
             if (!getConfig().isInt("faceSize")) {
                 getConfig().set("faceSize", 4);
             }
@@ -170,6 +174,9 @@ public class MM extends JavaPlugin {
             }
             if (!getConfig().isBoolean("show-update-message")) {
                 getConfig().set("show-update-message", true);
+            }
+            if (!getConfig().isSet("base-command")) {
+                getConfig().set("base-command", "mm");
             }
             saveConfig();
         }
