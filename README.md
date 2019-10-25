@@ -24,7 +24,7 @@ Players' faces are retrieved through [Minotar](http://minotar.net/).
 ![Marauders Map Plugin Demonstration](Demonstration/MaraudersMapDemonstration.gif)
 
 # What info do I collect?
-If you set `show-update-message` in the lang.yml file to `true`. Then whenever the plugin is checking for an update, it will ping my website to check for the update and upon that ping, the software I use shows me the IP of those who have pinged my website.
+If you set `show-update-message` in the lang.yml file to `true`, Then whenever the plugin is checking for an update, it will ping my website to check for the update and upon that ping, the software I use shows me the IP of those who have pinged my website.
 
 Your IP address will not be shared nor used by me or any third-party services.
 
@@ -32,3 +32,6 @@ Your IP address will not be shared nor used by me or any third-party services.
   + [Govindas Limework](http://gmn.us.to/)
   + [Barbercraft](http://mc-barbercraft.com/)
   + [Dumbledore's Army](http://dumbledoresarmy.enjin.com/)
+
+# Check out my Other Work! :)
+If you like this plugin, then click [here](https://www.spigotmc.org/resources/authors/akzombie74.60259/) for more similar resources.
